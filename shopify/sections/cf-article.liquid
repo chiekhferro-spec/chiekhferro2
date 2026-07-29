@@ -1,0 +1,8 @@
+{% comment %} sections/cf-article.liquid — Single article {% endcomment %}
+<article class="mx-auto max-w-[800px] px-4 py-12">
+  <h1 class="text-3xl font-black text-ink-main mb-3">{{ article.title }}</h1>
+  <p class="text-sm text-ink-faint mb-6">{{ article.published_at | date: '%d %B %Y' }}</p>
+  {% if article.image %}<img src="{{ article.image | image_url: width: 1200 }}" alt="{{ article.title | escape }}" class="w-full rounded-industrial-lg mb-6">{% endif %}
+  <div class="prose-cf text-ink-muted leading-relaxed">{{ article.content }}</div>
+</article>
+{% schema %}{ "name": "CF Article", "settings": [] }{% endschema %}

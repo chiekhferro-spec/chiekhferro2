@@ -1,0 +1,39 @@
+{% comment %} sections/cf-search.liquid — Search results {% endcomment %}
+<div class="mx-auto max-w-[1400px] px-4 py-8">
+  <h1 class="text-2xl font-black text-ink-main mb-6">نتائج البحث</h1>
+  <form action="/search" method="get" class="mb-6">
+    <div class="relative max-w-md">
+      <input type="text" name="q" value="{{ search.terms | escape }}" placeholder="ابحث عن معدات..."
+             class="w-full h-11 rounded-industrial bg-bg-surface border border-steel-500 px-4 pr-10 text-sm text-ink-main focus-industrial">
+      <button type="submit" class="absolute left-2 top-1/2 -translate-y-1/2 text-ink-muted hover:text-accent">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+    </div>
+  </form>
+  {% if search.performed %}
+    {% if search.results.size > 0 %}
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
+        {% for item in search.results %}
+          {% if item.object_type == 'product' %}
+            <a href="{{ item.url }}" class="group block bg-bg-surface rounded-industrial-lg border border-steel-500/60 overflow-hidden hover:border-accent/50 transition-all">
+              <div class="aspect-square overflow-hidden bg-steel-700">
+                {% if item.featured_image %}<img src="{{ item.featured_image | image_url: width: 500 }}" alt="{{ item.title | escape }}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">{% endif %}
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-bold text-ink-main line-clamp-2 group-hover:text-accent">{{ item.title }}</h3>
+                <span class="mt-1 block text-lg font-black text-accent">{{ item.price | money }}</span>
+              </div>
+            </a>
+          {% else %}
+            <a href="{{ item.url }}" class="block bg-bg-surface rounded-industrial-lg border border-steel-500/60 p-4 hover:border-accent/50 transition-all">
+              <h3 class="text-sm font-bold text-ink-main">{{ item.title }}</h3>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-sm text-ink-muted">لا توجد نتائج. جرّب كلمات أخرى.</p>
+    {% endif %}
+  {% endif %}
+</div>
+{% schema %}{ "name": "CF Search", "settings": [] }{% endschema %}

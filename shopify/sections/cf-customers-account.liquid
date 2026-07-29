@@ -1,0 +1,21 @@
+{% comment %} sections/cf-customers-account.liquid {% endcomment %}
+<div class="mx-auto max-w-[800px] px-4 py-12">
+  <h1 class="text-2xl font-black text-ink-main mb-6">حسابي</h1>
+  <h2 class="text-lg font-bold text-ink-main mb-3">طلباتي</h2>
+  {% if customer.orders.size > 0 %}
+    <div class="space-y-3">
+      {% for order in customer.orders %}
+        <a href="{{ order.customer_url }}" class="block bg-bg-surface rounded-industrial border border-steel-500/60 p-4 hover:border-accent/50 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-ink-main">{{ order.name }}</span>
+            <span class="text-accent font-bold">{{ order.total_price | money }}</span>
+          </div>
+          <div class="mt-1 text-xs text-ink-faint">{{ order.created_at | date: '%d %B %Y' }} · {{ order.financial_status_label }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-sm text-ink-muted">لا توجد طلبات بعد.</p>
+  {% endif %}
+</div>
+{% schema %}{ "name": "CF Account", "settings": [] }{% endschema %}

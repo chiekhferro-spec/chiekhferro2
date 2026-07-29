@@ -1,0 +1,430 @@
+{% comment %}
+  sections/cf-collection-grid.liquid
+  CHIEKH FERRO — Dynamic industrial collection grid
+  -----------------------------------------------------------
+  - Pulls products dynamically from the `collection` object.
+  - Loops through `collection.products` (Shopify-paginated).
+  - Renders technical specs from per-product metafields, fully
+    configurable from the theme editor (no hardcoded HTML).
+  - RTL Arabic + dark industrial Tailwind classes baked in.
+  - Respects `collection.products_count`, pagination, and sort order.
+{% endcomment %}
+
+{%- liquid
+  assign current_sort = collection.sort_by | default: collection.default_sort_by
+  assign grid_cols = section.settings.grid_columns
+  case grid_cols
+    when 2
+      assign col_class = 'grid-cols-2'
+    when 3
+      assign col_class = 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'
+    when 4
+      assign col_class = 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4'
+    else
+      assign col_class = 'grid-cols-1 sm:grid-cols-2 xl:grid-cols-3'
+  endcase
+
+  assign show_vendor = section.settings.show_vendor
+  assign show_rating = section.settings.show_rating
+  assign show_stock = section.settings.show_stock
+  assign show_quick_add = section.settings.show_quick_add
+  assign show_specs = section.settings.show_specs
+  assign show_swatches = section.settings.show_swatches
+  assign image_ratio = section.settings.image_ratio
+  case image_ratio
+    when 'square'
+      assign ratio_class = 'aspect-square'
+    when 'portrait'
+      assign ratio_class = 'aspect-[3/4]'
+    when 'landscape'
+      assign ratio_class = 'aspect-[4/3]'
+    else
+      assign ratio_class = 'aspect-square'
+  endcase
+-%}
+
+<section
+  class="cf-collection-grid bg-bg-primary py-8"
+  data-section-id="{{ section.id }}"
+  data-collection-handle="{{ collection.handle }}"
+  data-products-count="{{ collection.products_count }}"
+>
+  <div class="mx-auto max-w-[1400px] px-4">
+
+    {% comment %} ====== Header + dynamic sort ====== {% endcomment %}
+    <div class="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div>
+        {% if section.settings.show_collection_title and collection.title != blank %}
+          <h2 class="text-2xl md:text-3xl font-black text-ink-main">{{ collection.title }}</h2>
+        {% endif %}
+        {% if section.settings.show_collection_description and collection.description != blank %}
+          <p class="mt-1.5 text-sm text-ink-muted max-w-2xl">{{ collection.description | strip_html | truncate: 160 }}</p>
+        {% endif %}
+        <p class="mt-2 text-xs text-ink-faint">
+          <span class="font-bold text-ink-main">{{ collection.products_count }}</span> منتج صناعي متوفر
+        </p>
+      </div>
+
+      {% if section.settings.show_sorting and collection.products_count > 0 %}
+        <form method="get" class="flex items-center gap-2" data-sort-form>
+          <label for="SortBy-{{ section.id }}" class="text-xs text-ink-faint">ترتيب حسب</label>
+          <div class="relative">
+            <select
+              id="SortBy-{{ section.id }}"
+              name="sort_by"
+              class="h-9 pl-8 pr-3 rounded-industrial bg-bg-surface border border-steel-500 text-sm text-ink-main focus-industrial appearance-none cursor-pointer"
+              data-sort-select
+            >
+              {% for option in collection.sort_options %}
+                <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %} class="bg-bg-surface text-ink-main">
+                  {{ option.name }}
+                </option>
+              {% endfor %}
+            </select>
+            <svg class="absolute left-2 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          </div>
+          <noscript><button type="submit" class="h-9 px-3 rounded-industrial bg-accent text-bg-primary text-sm font-bold">تطبيق</button></noscript>
+        </form>
+      {% endif %}
+    </div>
+
+    {% comment %} ====== Empty state ====== {% endcomment %}
+    {% if collection.products_count == 0 %}
+      <div class="flex flex-col items-center justify-center py-20 bg-bg-surface rounded-industrial-lg border border-steel-500/60 text-center">
+        <svg class="text-ink-faint mb-3" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        <h3 class="text-lg font-bold text-ink-main">لا توجد منتجات في هذه المجموعة حالياً</h3>
+        <p class="mt-1 text-sm text-ink-muted">جرّب مجموعة أخرى أو تواصل معنا لطلب خاص.</p>
+        <a href="/collections" class="mt-5 h-10 px-5 inline-flex items-center rounded-industrial bg-accent text-bg-primary text-sm font-bold hover:bg-accent-yellow transition-colors">
+          تصفح كل المجموعات
+        </a>
+      </div>
+    {% else %}
+
+      {% comment %} ====== Dynamic product grid ====== {% endcomment %}
+      <div class="grid {{ col_class }} gap-4" data-product-grid>
+        {% paginate collection.products by section.settings.products_per_page %}
+          {% for product in collection.products %}
+
+            {%- liquid
+              assign on_sale = false
+              if product.compare_at_price > product.price
+                assign on_sale = true
+                assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
+              endif
+              assign variant = product.selected_or_first_available_variant
+              assign inv_qty = variant.inventory_quantity
+            -%}
+
+            <article
+              class="group relative flex flex-col bg-bg-surface rounded-industrial-lg border border-steel-500/60 overflow-hidden hover:border-accent/50 hover:shadow-industrial-lg transition-all duration-200"
+              data-product-id="{{ product.id }}"
+              data-product-handle="{{ product.handle }}"
+              {% unless product.available %}data-unavailable{% endunless %}
+            >
+              {% comment %} Image {% endcomment %}
+              <a href="{{ product.url }}" class="relative {{ ratio_class }} overflow-hidden bg-steel-700 grid-texture block" aria-label="{{ product.title | escape }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 700 }}"
+                    srcset="{{ product.featured_image | image_url: width: 400 }} 400w, {{ product.featured_image | image_url: width: 700 }} 700w, {{ product.featured_image | image_url: width: 1000 }} 1000w"
+                    sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                    loading="lazy"
+                    width="{{ product.featured_image.width }}"
+                    height="{{ product.featured_image.height }}"
+                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  >
+                {% else %}
+                  <div class="h-full w-full flex items-center justify-center text-ink-faint text-sm">{{ 'product-1' | placeholder_svg_tag: 'w-20 h-20' }}</div>
+                {% endif %}
+
+                {% comment %} Badges {% endcomment %}
+                <div class="absolute top-2 right-2 flex flex-col gap-1.5 items-start">
+                  {% if on_sale %}
+                    <span class="bg-danger text-white text-xs font-bold px-2 py-0.5 rounded-sm shadow-industrial">-{{ discount_pct }}%</span>
+                  {% endif %}
+                  {% if product.tags contains 'bestseller' %}
+                    <span class="bg-accent text-bg-primary text-[10px] font-bold px-2 py-0.5 rounded-sm">الأكثر مبيعاً</span>
+                  {% elsif product.tags contains 'new' %}
+                    <span class="bg-success/90 text-bg-primary text-[10px] font-bold px-2 py-0.5 rounded-sm">جديد</span>
+                  {% elsif product.tags contains 'exclusive' %}
+                    <span class="bg-warning/90 text-bg-primary text-[10px] font-bold px-2 py-0.5 rounded-sm">حصري</span>
+                  {% endif %}
+                </div>
+              </a>
+
+              {% comment %} Body {% endcomment %}
+              <div class="flex flex-col flex-1 p-3.5">
+                <div class="flex items-center justify-between mb-1.5">
+                  {% if show_vendor %}
+                    <span class="text-[10px] font-bold text-accent tracking-wider">{{ product.vendor }}</span>
+                  {% endif %}
+                  <span class="text-[10px] text-ink-faint font-mono">{{ product.sku | default: product.id }}</span>
+                </div>
+
+                <h3 class="text-sm font-bold text-ink-main leading-snug min-h-[2.5rem]">
+                  <a href="{{ product.url }}" class="line-clamp-2 group-hover:text-accent transition-colors">
+                    {{ product.title }}
+                  </a>
+                </h3>
+
+                {% if show_rating and product.metafields.reviews.rating.value != blank %}
+                  <div class="mt-2 flex items-center gap-1.5" data-rating="{{ product.metafields.reviews.rating.value }}">
+                    <span class="text-xs font-bold text-accent-yellow">{{ product.metafields.reviews.rating.value }}</span>
+                    <span class="text-xs text-ink-faint">
+                      ({{ product.metafields.reviews.count.value | default: 0 }})
+                    </span>
+                  </div>
+                {% endif %}
+
+                {% if show_stock %}
+                  <div class="mt-2">
+                    {% if product.available %}
+                      <div class="flex items-center gap-1.5">
+                        <span class="inline-flex h-2 w-2 rounded-full {% if inv_qty <= 7 %}bg-warning{% else %}bg-success{% endif %} animate-pulse"></span>
+                        <span class="text-xs font-medium {% if inv_qty <= 7 %}text-warning{% else %}text-success{% endif %}">
+                          {% if inv_qty <= 7 %}متبقي {{ inv_qty }} قطع فقط{% else %}متوفر في المخزون{% endif %}
+                        </span>
+                      </div>
+                    {% else %}
+                      <span class="text-xs font-medium text-danger">نفد المخزون</span>
+                    {% endif %}
+                  </div>
+                {% endif %}
+
+                {% comment %} Dynamic technical specs from metafields {% endcomment %}
+                {% if show_specs %}
+                  <div class="mt-2.5 flex flex-wrap gap-1" data-specs>
+                    {% for block in section.blocks %}
+                      {% if block.type == 'spec' %}
+                        {% assign mf = product.metafields[block.settings.metafield_namespace][block.settings.metafield_key] %}
+                        {% if mf != blank %}
+                          <span class="text-[10px] text-ink-muted bg-steel-700/60 px-1.5 py-0.5 rounded"
+                                data-spec="{{ block.settings.metafield_namespace }}.{{ block.settings.metafield_key }}">
+                            {{ block.settings.label | default: block.settings.metafield_key }}: {{ mf.value | default: mf }}
+                          </span>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                {% comment %} Variant swatches (color) {% endcomment %}
+                {% if show_swatches and product.has_only_default_variant == false %}
+                  <div class="mt-2.5 flex flex-wrap gap-1.5" data-swatches>
+                    {% for option in product.options_with_values %}
+                      {% if option.name == 'اللون' or option.name == 'Color' %}
+                        {% for value in option.values %}
+                          <span class="h-5 w-5 rounded-full border border-steel-400"
+                                style="background-color: {{ value | handleize }};"
+                                title="{{ value }}"></span>
+                        {% endfor %}
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+                {% comment %} Price + quick add {% endcomment %}
+                <div class="mt-auto pt-3.5">
+                  <div class="flex items-end justify-between gap-2">
+                    <div class="flex flex-col">
+                      {% if on_sale %}
+                        <span class="text-xs text-ink-faint line-through">{{ product.compare_at_price | money }}</span>
+                      {% endif %}
+                      <span class="text-lg font-black text-ink-main">{{ product.price | money }}</span>
+                    </div>
+
+                    {% if show_quick_add and product.available %}
+                      <form action="/cart/add" method="post" data-ajax-add class="ajax-add-form">
+                        <input type="hidden" name="id" value="{{ variant.id }}">
+                        <input type="hidden" name="quantity" value="1">
+                        <button type="submit" class="flex items-center gap-1.5 h-9 px-3 rounded-industrial text-sm font-bold bg-accent text-bg-primary hover:bg-accent-yellow active:scale-95 transition-all" data-add-btn>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                          <span data-add-label>أضف</span>
+                        </button>
+                      </form>
+                    {% elsif show_quick_add and product.available == false %}
+                      <span class="h-9 px-3 inline-flex items-center rounded-industrial text-sm font-bold bg-steel-500 text-ink-faint">نفد</span>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </article>
+
+          {% endfor %}
+
+          {% comment %} ====== Pagination ====== {% endcomment %}
+          {% if paginate.pages > 1 %}
+            <nav class="col-span-full mt-8 flex items-center justify-center gap-2" data-pagination aria-label="ترقيم الصفحات">
+              {% if paginate.previous.is_link %}
+                <a href="{{ paginate.previous.url }}" class="h-9 w-9 flex items-center justify-center rounded-industrial bg-bg-surface border border-steel-500 text-ink-muted hover:text-accent hover:border-accent/50 transition-colors" aria-label="السابق">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                </a>
+              {% endif %}
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="h-9 min-w-9 px-3 flex items-center justify-center rounded-industrial bg-bg-surface border border-steel-500 text-sm text-ink-muted hover:text-accent hover:border-accent/50 transition-colors">{{ part.title }}</a>
+                {% else %}
+                  <span class="h-9 min-w-9 px-3 flex items-center justify-center rounded-industrial bg-accent text-bg-primary text-sm font-bold" aria-current="page">{{ part.title }}</span>
+                {% endif %}
+              {% endfor %}
+              {% if paginate.next.is_link %}
+                <a href="{{ paginate.next.url }}" class="h-9 w-9 flex items-center justify-center rounded-industrial bg-bg-surface border border-steel-500 text-ink-muted hover:text-accent hover:border-accent/50 transition-colors" aria-label="التالي">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                </a>
+              {% endif %}
+            </nav>
+          {% endif %}
+        {% endpaginate %}
+      </div>
+
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CF Collection Grid",
+  "tag": "section",
+  "class": "section-cf-collection-grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "التخطيط"
+    },
+    {
+      "type": "range",
+      "id": "grid_columns",
+      "label": "عدد الأعمدة",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 4,
+      "info": "عدد أعمدة الشبكة على الشاشات الكبيرة"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "منتجات لكل صفحة",
+      "min": 4,
+      "max": 48,
+      "step": 4,
+      "default": 12,
+      "info": "عدد المنتجات المعروضة قبل التقسيم (pagination)"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "نسبة الصورة",
+      "options": [
+        { "value": "square", "label": "مربعة (1:1)" },
+        { "value": "portrait", "label": "عمودية (3:4)" },
+        { "value": "landscape", "label": "أفقية (4:3)" }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "header",
+      "content": "العناصر الظاهرة في البطاقة"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_title",
+      "label": "إظهار عنوان المجموعة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "إظهار وصف المجموعة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sorting",
+      "label": "إظهار الترتيب",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "إظهار الماركة",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "إظهار التقييم",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stock",
+      "label": "إظهار حالة المخزون",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_specs",
+      "label": "إظهار المواصفات التقنية (metafields)",
+      "default": true,
+      "info": "يستخدم بلوكات المواصفات أدناه"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_swatches",
+      "label": "إظهار عينات الألوان",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add",
+      "label": "إظهار زر الإضافة السريعة",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "spec",
+      "name": "مواصفة تقنية",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "الاسم المعروض",
+          "default": "الطاقة",
+          "info": "مثال: الطاقة، الجهد، السعة. يظهر قبل القيمة."
+        },
+        {
+          "type": "text",
+          "id": "metafield_namespace",
+          "label": "مساحة الميتافيلد (namespace)",
+          "default": "specs",
+          "info": "مثال: specs، power، dimensions"
+        },
+        {
+          "type": "text",
+          "id": "metafield_key",
+          "label": "مفتاح الميتافيلد (key)",
+          "default": "power",
+          "info": "مثال: power، voltage، capacity"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CF Collection Grid",
+      "blocks": [
+        { "type": "spec", "settings": { "label": "الطاقة", "metafield_namespace": "specs", "metafield_key": "power" } },
+        { "type": "spec", "settings": { "label": "الجهد", "metafield_namespace": "specs", "metafield_key": "voltage" } },
+        { "type": "spec", "settings": { "label": "السعة", "metafield_namespace": "specs", "metafield_key": "capacity" } }
+      ]
+    }
+  ],
+  "enabled_on": {
+    "templates": ["collection"]
+  }
+}
+{% endschema %}

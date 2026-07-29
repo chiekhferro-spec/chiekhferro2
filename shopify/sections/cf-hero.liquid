@@ -1,0 +1,38 @@
+{% comment %}
+  sections/cf-hero.liquid
+  CHIEKH FERRO — Homepage hero banner.
+{% endcomment %}
+<section class="relative overflow-hidden bg-bg-elevated border-b border-steel-500/60">
+  <div class="absolute inset-0 grid-texture opacity-30"></div>
+  <div class="relative mx-auto max-w-[1400px] px-4 py-20 md:py-28 text-center">
+    <span class="inline-block text-xs font-bold text-accent tracking-widest mb-4 uppercase">معدات صناعية · آلات ثقيلة</span>
+    <h1 class="text-4xl md:text-6xl font-black text-ink-main leading-tight">
+      CHIEKH <span class="text-accent">FERRO</span>
+    </h1>
+    <p class="mt-5 text-lg text-ink-muted max-w-2xl mx-auto leading-relaxed">
+      علامتكم الموثوقة في المعدات الصناعية الأصلية. معدات وآلات بضمان رسمي للمحترفين والمقاولات.
+    </p>
+    <div class="mt-8 flex items-center justify-center gap-3 flex-wrap">
+      <a href="/collections/all" class="h-12 px-8 inline-flex items-center rounded-industrial bg-accent text-bg-primary font-bold hover:bg-accent-yellow transition-colors">
+        تصفح المنتجات
+      </a>
+      <a href="https://wa.me/{{ settings.whatsapp_number | default: '213555000000' }}"
+         target="_blank" rel="noreferrer"
+         class="h-12 px-8 inline-flex items-center rounded-industrial bg-success/15 text-success font-bold hover:bg-success/25 transition-colors border border-success/30">
+        اطلب عرض سعر B2B
+      </a>
+    </div>
+    <div class="mt-10 flex items-center justify-center gap-6 flex-wrap text-xs text-ink-faint">
+      <span class="flex items-center gap-1.5">✓ ضمان رسمي 24 شهر</span>
+      <span class="flex items-center gap-1.5">✓ توصيل 48 ساعة</span>
+      <span class="flex items-center gap-1.5">✓ دفع عند الاستلام</span>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "CF Hero",
+  "settings": []
+}
+{% endschema %}

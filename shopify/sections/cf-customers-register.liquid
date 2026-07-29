@@ -1,0 +1,11 @@
+{% comment %} sections/cf-customers-register.liquid {% endcomment %}
+<div class="mx-auto max-w-[400px] px-4 py-16">
+  <h1 class="text-2xl font-black text-ink-main mb-6">إنشاء حساب</h1>
+  {% form 'create_customer' %}
+    <input type="text" name="customer[first_name]" placeholder="الاسم" class="w-full h-11 rounded-industrial bg-bg-surface border border-steel-500 px-4 text-sm text-ink-main focus-industrial mb-3">
+    <input type="email" name="customer[email]" placeholder="البريد الإلكتروني" required class="w-full h-11 rounded-industrial bg-bg-surface border border-steel-500 px-4 text-sm text-ink-main focus-industrial mb-3">
+    <input type="password" name="customer[password]" placeholder="كلمة المرور" required class="w-full h-11 rounded-industrial bg-bg-surface border border-steel-500 px-4 text-sm text-ink-main focus-industrial mb-4">
+    <button type="submit" class="w-full h-11 rounded-industrial bg-accent text-bg-primary font-bold hover:bg-accent-yellow transition-colors">تسجيل</button>
+  {% endform %}
+</div>
+{% schema %}{ "name": "CF Register", "settings": [] }{% endschema %}

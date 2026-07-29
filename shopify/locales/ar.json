@@ -1,0 +1,33 @@
+{
+  "general": {
+    "meta": {
+      "tags": "موسومة بـ \"{{ tags }}\"",
+      "page": "صفحة {{ page }}"
+    },
+    "password_page": {
+      "opening_soon": "افتتاح قريباً"
+    },
+    "404": {
+      "title": "الصفحة غير موجودة",
+      "subtext": "عذراً، الصفحة التي تبحث عنها غير متوفرة."
+    },
+    "search": {
+      "title": "نتائج البحث",
+      "placeholder": "ابحث عن معدات...",
+      "no_results": "لا توجد نتائج."
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "أضف إلى السلة",
+      "sold_out": "نفد المخزون",
+      "on_sale": "تخفيض",
+      "from": "ابتداءً من"
+    }
+  },
+  "gift_cards": {
+    "issued": {
+      "title": "قيمة البطاقة: {{ value }}"
+    }
+  }
+}
