@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "cf-blog",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

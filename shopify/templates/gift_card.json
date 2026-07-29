@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "cf-gift-card",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

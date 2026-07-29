@@ -1,0 +1,57 @@
+{% comment %}
+  sections/cf-header.liquid
+  CHIEKH FERRO — Global site header with nav + cart drawer toggle.
+{% endcomment %}
+<header class="sticky top-0 z-40 bg-bg-elevated/95 backdrop-blur border-b border-steel-500/60">
+  <div class="mx-auto max-w-[1400px] px-4">
+    <div class="flex items-center justify-between h-16 gap-4">
+      {% comment %} Logo {% endcomment %}
+      <a href="/" class="flex items-center gap-2 shrink-0" aria-label="{{ shop.name }}">
+        {% if settings.logo != blank %}
+          <img src="{{ settings.logo | image_url: width: settings.logo_width }}"
+               width="{{ settings.logo_width }}"
+               alt="{{ shop.name | escape }}"
+               class="h-auto">
+        {% else %}
+          <span class="text-xl font-black text-ink-main tracking-tight">
+            CHIEKH <span class="text-accent">FERRO</span>
+          </span>
+        {% endif %}
+      </a>
+
+      {% comment %} Navigation {% endcomment %}
+      <nav class="hidden lg:flex items-center gap-1" aria-label="التنقل الرئيسي">
+        {% for link in linklists.main-menu.links %}
+          <a href="{{ link.url }}"
+             class="px-3 py-2 text-sm font-bold text-ink-muted hover:text-accent transition-colors rounded-industrial hover:bg-bg-surface">
+            {{ link.title }}
+          </a>
+        {% endfor %}
+      </nav>
+
+      {% comment %} Actions {% endcomment %}
+      <div class="flex items-center gap-2">
+        <a href="/search"
+           class="h-9 w-9 flex items-center justify-center text-ink-muted hover:text-accent transition-colors"
+           aria-label="بحث">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        </a>
+        <a href="/cart"
+           class="relative h-9 w-9 flex items-center justify-center text-ink-muted hover:text-accent transition-colors"
+           aria-label="السلة">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          <span data-cart-count class="absolute -top-1 -right-1 h-4 min-w-4 px-1 rounded-full bg-accent text-bg-primary text-[10px] font-bold flex items-center justify-center" style="display: {% if cart.item_count > 0 %}flex{% else %}none{% endif %}">
+            {{ cart.item_count }}
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "CF Header",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,33 @@
+{
+  "general": {
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "password_page": {
+      "opening_soon": "Opening soon"
+    },
+    "404": {
+      "title": "Page not found",
+      "subtext": "Sorry, the page you were looking for is not available."
+    },
+    "search": {
+      "title": "Search results",
+      "placeholder": "Search for equipment...",
+      "no_results": "No results."
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "sold_out": "Sold out",
+      "on_sale": "Sale",
+      "from": "From"
+    }
+  },
+  "gift_cards": {
+    "issued": {
+      "title": "Gift card value: {{ value }}"
+    }
+  }
+}

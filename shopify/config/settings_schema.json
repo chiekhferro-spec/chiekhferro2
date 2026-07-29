@@ -1,0 +1,136 @@
+[
+  {
+    "type": "header",
+    "content": "CHIEKH FERRO — الهوية الصناعية"
+  },
+  {
+    "type": "color",
+    "id": "color_bg_primary",
+    "label": "الخلفية الأساسية (Matte Black)",
+    "default": "#111111"
+  },
+  {
+    "type": "color",
+    "id": "color_bg_surface",
+    "label": "الأسطح والبطاقات (Metallic Gray)",
+    "default": "#1E1E1E"
+  },
+  {
+    "type": "color",
+    "id": "color_bg_elevated",
+    "label": "الخلفية المرتفعة (Dark Charcoal)",
+    "default": "#1A1A1A"
+  },
+  {
+    "type": "color",
+    "id": "color_accent",
+    "label": "اللون المميز / CTA (Safety Orange)",
+    "default": "#FF8C00"
+  },
+  {
+    "type": "color",
+    "id": "color_accent_yellow",
+    "label": "اللون المميز الثانوي (Industrial Yellow)",
+    "default": "#F5A623"
+  },
+  {
+    "type": "color",
+    "id": "color_success",
+    "label": "نجاح / متوفر",
+    "default": "#22C55E"
+  },
+  {
+    "type": "color",
+    "id": "color_warning",
+    "label": "تحذير / مخزون منخفض",
+    "default": "#F59E0B"
+  },
+  {
+    "type": "color",
+    "id": "color_danger",
+    "label": "خطأ / خصم",
+    "default": "#EF4444"
+  },
+  {
+    "type": "color",
+    "id": "color_ink_main",
+    "label": "النص الأساسي",
+    "default": "#F5F5F5"
+  },
+  {
+    "type": "color",
+    "id": "color_ink_muted",
+    "label": "النص الثانوي",
+    "default": "#A1A1AA"
+  },
+  {
+    "type": "color",
+    "id": "color_ink_faint",
+    "label": "النص الخافت",
+    "default": "#71717A"
+  },
+  {
+    "type": "header",
+    "content": "الخطوط"
+  },
+  {
+    "type": "font_picker",
+    "id": "font_body",
+    "label": "خط النصوص",
+    "default": "assistant_n4"
+  },
+  {
+    "type": "font_picker",
+    "id": "font_heading",
+    "label": "خط العناوين",
+    "default": "assistant_n7"
+  },
+  {
+    "type": "header",
+    "content": "الشعار والترويسة"
+  },
+  {
+    "type": "image_picker",
+    "id": "logo",
+    "label": "شعار المتجر"
+  },
+  {
+    "type": "range",
+    "id": "logo_width",
+    "label": "عرض الشعار (بكسل)",
+    "min": 40,
+    "max": 200,
+    "step": 10,
+    "default": 120,
+    "unit": "px"
+  },
+  {
+    "type": "text",
+    "id": "whatsapp_number",
+    "label": "رقم واتساب للتواصل B2B",
+    "default": "213555000000",
+    "info": "بدون علامة + أو مسافات"
+  },
+  {
+    "type": "header",
+    "content": "التذييل"
+  },
+  {
+    "type": "text",
+    "id": "footer_address",
+    "label": "عنوان المتجر",
+    "default": "المنطقة الصناعية، وهران، الجزائر"
+  },
+  {
+    "type": "text",
+    "id": "footer_phone",
+    "label": "هاتف المتجر",
+    "default": "+213 555 000 000"
+  },
+  {
+    "type": "text",
+    "id": "footer_email",
+    "label": "بريد المتجر",
+    "default": "contact@chiekhferro.com"
+  }
+]

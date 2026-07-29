@@ -1,0 +1,44 @@
+{
+  "current": {
+    "color_bg_primary": "#111111",
+    "color_bg_surface": "#1E1E1E",
+    "color_bg_elevated": "#1A1A1A",
+    "color_accent": "#FF8C00",
+    "color_accent_yellow": "#F5A623",
+    "color_success": "#22C55E",
+    "color_warning": "#F59E0B",
+    "color_danger": "#EF4444",
+    "color_ink_main": "#F5F5F5",
+    "color_ink_muted": "#A1A1AA",
+    "color_ink_faint": "#71717A",
+    "font_body": "assistant_n4",
+    "font_heading": "assistant_n7",
+    "logo_width": 120,
+    "whatsapp_number": "213555000000",
+    "footer_address": "المنطقة الصناعية، وهران، الجزائر",
+    "footer_phone": "+213 555 000 000",
+    "footer_email": "contact@chiekhferro.com"
+  },
+  "presets": {
+    "Default": {
+      "color_bg_primary": "#111111",
+      "color_bg_surface": "#1E1E1E",
+      "color_bg_elevated": "#1A1A1A",
+      "color_accent": "#FF8C00",
+      "color_accent_yellow": "#F5A623",
+      "color_success": "#22C55E",
+      "color_warning": "#F59E0B",
+      "color_danger": "#EF4444",
+      "color_ink_main": "#F5F5F5",
+      "color_ink_muted": "#A1A1AA",
+      "color_ink_faint": "#71717A",
+      "font_body": "assistant_n4",
+      "font_heading": "assistant_n7",
+      "logo_width": 120,
+      "whatsapp_number": "213555000000",
+      "footer_address": "المنطقة الصناعية، وهران، الجزائر",
+      "footer_phone": "+213 555 000 000",
+      "footer_email": "contact@chiekhferro.com"
+    }
+  }
+}

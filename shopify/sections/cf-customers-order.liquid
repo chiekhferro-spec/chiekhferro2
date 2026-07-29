@@ -1,0 +1,19 @@
+{% comment %} sections/cf-customers-order.liquid {% endcomment %}
+<div class="mx-auto max-w-[800px] px-4 py-12">
+  <a href="/account" class="text-sm text-accent hover:underline mb-4 inline-block">← العودة لحسابي</a>
+  <h1 class="text-2xl font-black text-ink-main mb-2">{{ order.name }}</h1>
+  <p class="text-sm text-ink-faint mb-6">{{ order.created_at | date: '%d %B %Y' }} · {{ order.financial_status_label }}</p>
+  <div class="bg-bg-surface rounded-industrial-lg border border-steel-500/60 p-4">
+    {% for line_item in order.line_items %}
+      <div class="flex items-center justify-between py-2 border-b border-steel-500/40 last:border-0">
+        <span class="text-sm text-ink-main">{{ line_item.title }} ×{{ line_item.quantity }}</span>
+        <span class="text-sm font-bold text-ink-main">{{ line_item.final_line_price | money }}</span>
+      </div>
+    {% endfor %}
+    <div class="flex items-center justify-between pt-3 mt-2 border-t border-steel-500/60">
+      <span class="font-bold text-ink-main">الإجمالي</span>
+      <span class="text-lg font-black text-accent">{{ order.total_price | money }}</span>
+    </div>
+  </div>
+</div>
+{% schema %}{ "name": "CF Order", "settings": [] }{% endschema %}

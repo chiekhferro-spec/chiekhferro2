@@ -1,0 +1,37 @@
+{
+  "sections": {
+    "main": {
+      "type": "cf-product-detail",
+      "settings": {
+        "show_vendor": true,
+        "show_rating": true,
+        "show_stock": true,
+        "show_specs": true,
+        "show_quick_add": true,
+        "show_whatsapp_quote": true,
+        "show_trust_badges": true,
+        "show_related": true
+      },
+      "blocks": {
+        "spec_brand": {
+          "type": "spec",
+          "settings": { "label": "الماركة", "metafield_namespace": "specs", "metafield_key": "brand" }
+        },
+        "spec_power": {
+          "type": "spec",
+          "settings": { "label": "الطاقة", "metafield_namespace": "specs", "metafield_key": "power" }
+        },
+        "spec_voltage": {
+          "type": "spec",
+          "settings": { "label": "الجهد", "metafield_namespace": "specs", "metafield_key": "voltage" }
+        },
+        "spec_capacity": {
+          "type": "spec",
+          "settings": { "label": "السعة", "metafield_namespace": "specs", "metafield_key": "capacity" }
+        }
+      },
+      "block_order": ["spec_brand", "spec_power", "spec_voltage", "spec_capacity"]
+    }
+  },
+  "order": ["main"]
+}

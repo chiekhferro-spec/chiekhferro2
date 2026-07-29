@@ -1,0 +1,37 @@
+{
+  "sections": {
+    "hero": {
+      "type": "cf-hero",
+      "settings": {}
+    },
+    "featured": {
+      "type": "cf-collection-grid",
+      "settings": {
+        "grid_columns": 4,
+        "products_per_page": 8,
+        "image_ratio": "square",
+        "show_collection_title": true,
+        "show_collection_description": false,
+        "show_sorting": false,
+        "show_vendor": true,
+        "show_rating": true,
+        "show_stock": true,
+        "show_specs": true,
+        "show_swatches": true,
+        "show_quick_add": true
+      },
+      "blocks": {
+        "spec_power": {
+          "type": "spec",
+          "settings": { "label": "الطاقة", "metafield_namespace": "specs", "metafield_key": "power" }
+        },
+        "spec_voltage": {
+          "type": "spec",
+          "settings": { "label": "الجهد", "metafield_namespace": "specs", "metafield_key": "voltage" }
+        }
+      },
+      "block_order": ["spec_power", "spec_voltage"]
+    }
+  },
+  "order": ["hero", "featured"]
+}

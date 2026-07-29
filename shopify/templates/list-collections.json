@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "cf-list-collections",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
