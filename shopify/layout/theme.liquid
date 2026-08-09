@@ -1,0 +1,61 @@
+{% comment %}
+  layout/theme.liquid
+  CHIEKH FERRO — Master layout template (required by Shopify).
+  This is the HTML shell that wraps every page in the store.
+{% endcomment %}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="theme-color" content="{{ settings.color_bg_primary | default: '#111111' }}">
+
+  <title>{{ page_title }}{% if current_tags %} &ndash; {{ 'general.meta.tags' | t: tags: current_tags | join: ', ' }}{% endif %}{% if current_page != 1 %} &ndash; {{ 'general.meta.page' | t: page: current_page }}{% endif %}{% unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless %}</title>
+
+  {% if page_description %}
+    <meta name="description" content="{{ page_description | escape }}">
+  {% endif %}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+  {{ settings.font_body | font_face: font_display: 'swap' }}
+  {{ settings.font_heading | font_face: font_display: 'swap' }}
+
+  {% comment %} Tailwind CSS — compiled utility classes for the industrial theme {% endcomment %}
+  {{ 'cf-tailwind.css' | asset_url | stylesheet_tag }}
+  <style>
+    :root {
+      --color-bg-primary: {{ settings.color_bg_primary | default: '#0d0d0d' }};
+      --color-bg-surface: {{ settings.color_bg_surface | default: '#1c1c1c' }};
+      --color-bg-elevated: {{ settings.color_bg_elevated | default: '#151515' }};
+      --color-accent: {{ settings.color_accent | default: '#ffab19' }};
+      --color-accent-yellow: {{ settings.color_accent_yellow | default: '#ffc247' }};
+      --color-ink-main: {{ settings.color_ink_main | default: '#f8f7f3' }};
+      --color-ink-muted: {{ settings.color_ink_muted | default: '#a8a59d' }};
+      --color-ink-faint: {{ settings.color_ink_faint | default: '#73716c' }};
+    }
+    body { font-family: {{ settings.font_body.family | default: 'Arial' }}, sans-serif; }
+    h1, h2, h3, h4, button { font-family: {{ settings.font_heading.family | default: 'Arial' }}, sans-serif; }
+  </style>
+
+  {% comment %} Section + theme scripts {% endcomment %}
+  <script src="{{ 'cf-collection-grid.js' | asset_url }}" defer="defer"></script>
+
+  {{ content_for_header }}
+</head>
+
+<body class="min-h-screen bg-bg-primary text-ink-main font-sans antialiased">
+  {% section 'cf-announcement' %}
+  {% section 'cf-header' %}
+
+  <main id="MainContent" class="main-content" role="main">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'cf-footer' %}
+
+  {% comment %} Cart drawer (global) {% endcomment %}
+  {% render 'cf-cart-drawer' %}
+</body>
+</html>

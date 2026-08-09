@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "cf-cart",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}

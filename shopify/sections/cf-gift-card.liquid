@@ -1,0 +1,9 @@
+{% comment %} sections/cf-gift-card.liquid — Gift card {% endcomment %}
+<div class="mx-auto max-w-[500px] px-4 py-16 text-center">
+  <h1 class="text-2xl font-black text-ink-main mb-4">{{ 'gift_cards.issued.title' | t: value: gift_card.initial_value | money }}</h1>
+  <p class="text-sm text-ink-muted mb-6">{{ gift_card.code }}</p>
+  <a href="{{ shop.url }}" class="h-11 px-6 inline-flex items-center rounded-industrial bg-accent text-bg-primary font-bold hover:bg-accent-yellow transition-colors">
+    زيارة المتجر
+  </a>
+</div>
+{% schema %}{ "name": "CF Gift Card", "settings": [] }{% endschema %}

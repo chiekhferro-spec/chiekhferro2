@@ -1,0 +1,39 @@
+{% comment %}
+  snippets/cf-cart-drawer.liquid
+  CHIEKH FERRO — Slide-in cart drawer (global).
+  Uses Shopify AJAX API (/cart.js) for dynamic updates.
+{% endcomment %}
+<div id="CartDrawer" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+  <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-cart-drawer-overlay></div>
+  <aside class="absolute left-0 top-0 h-full w-full max-w-md bg-bg-primary border-l border-steel-500/60 shadow-industrial-lg flex flex-col" data-cart-drawer-panel>
+    <div class="flex items-center justify-between p-4 border-b border-steel-500/60">
+      <span class="font-bold text-ink-main">سلة المشتريات</span>
+      <button data-cart-drawer-close class="text-ink-muted hover:text-accent transition-colors" aria-label="إغلاق">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div id="CartDrawerBody" class="flex-1 overflow-y-auto p-4 space-y-3" data-cart-drawer-body>
+      {% comment %} Populated by AJAX /cart.js {% endcomment %}
+      <p class="text-sm text-ink-muted text-center py-8">جاري تحميل السلة...</p>
+    </div>
+    <div class="p-4 border-t border-steel-500/60 space-y-3" data-cart-drawer-footer>
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-bold text-ink-main">الإجمالي</span>
+        <span class="text-xl font-black text-accent" data-cart-drawer-total>—</span>
+      </div>
+      <a href="/checkout" class="block w-full h-11 rounded-industrial bg-accent text-bg-primary font-bold text-center leading-[2.75rem] hover:bg-accent-yellow transition-colors">
+        إتمام الطلب
+      </a>
+    </div>
+  </aside>
+</div>
+<script>
+  (function(){
+    function openDrawer(){ document.getElementById('CartDrawer').classList.remove('hidden'); }
+    function closeDrawer(){ document.getElementById('CartDrawer').classList.add('hidden'); }
+    document.addEventListener('click', function(e){
+      if(e.target.closest('[data-cart-drawer-close]') || e.target.matches('[data-cart-drawer-overlay]')) closeDrawer();
+    });
+    window.CFCart = { open: openDrawer, close: closeDrawer };
+  })();
+</script>

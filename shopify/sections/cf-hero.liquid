@@ -1,0 +1,59 @@
+{% comment %}
+  sections/cf-hero.liquid
+  CHIEKH FERRO — Homepage hero banner.
+  Rugged industrial plate with high-contrast CTA and trust strip.
+{% endcomment %}
+<section class="cf-hero-plate relative overflow-hidden bg-bg-elevated border-b border-steel-500/60">
+  <div class="cf-stripe"></div>
+  <div class="relative mx-auto max-w-[1400px] px-4 py-16 md:py-24 text-center">
+    <span class="cf-eyebrow">معدات صناعية · آلات ثقيلة · ضمان رسمي</span>
+    <h1 class="cf-hero-title mt-4 text-4xl md:text-6xl text-ink-main">
+      CHIEKH <span class="text-accent">FERRO</span>
+    </h1>
+    <p class="mt-5 text-base md:text-lg text-ink-muted max-w-2xl mx-auto leading-relaxed">
+      علامتكم الموثوقة في المعدات الصناعية الأصلية. معدات وآلات بضمان رسمي للمحترفين والمقاولات — مواد عالية المقاومة، مُختبَرة ورشياً، وأداء ثقيل بلا تنازل.
+    </p>
+    <div class="mt-8 flex items-center justify-center gap-3 flex-wrap">
+      <a href="/collections/all" class="h-12 px-8 inline-flex items-center rounded-industrial bg-accent text-bg-primary font-bold hover:bg-accent-yellow transition-colors">
+        تصفح المنتجات
+      </a>
+      <a href="https://wa.me/{{ settings.whatsapp_number | default: '213555000000' }}"
+         target="_blank" rel="noreferrer"
+         class="h-12 px-8 inline-flex items-center rounded-industrial bg-success/15 text-success font-bold hover:bg-success/25 transition-colors border border-success/30">
+        اطلب عرض سعر B2B
+      </a>
+    </div>
+
+    {% comment %} Trust strip — high-tensile, workshop tested, heavy-duty {% endcomment %}
+    <div class="cf-trust mt-10 max-w-3xl mx-auto">
+      <div class="cf-trust-card">
+        <span class="cf-trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg></span>
+        <span class="cf-trust-title">مواد عالية المقاومة</span>
+        <span class="cf-trust-sub">High-Tensile Steel</span>
+      </div>
+      <div class="cf-trust-card">
+        <span class="cf-trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><path d="M12 2 4 5v6c0 5 3.5 9 8 11 4.5-2 8-6 8-11V5l-8-3z"/></svg></span>
+        <span class="cf-trust-title">مُختبَرة ورشياً</span>
+        <span class="cf-trust-sub">Workshop Tested</span>
+      </div>
+      <div class="cf-trust-card">
+        <span class="cf-trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12h18M3 6h18M3 18h18"/></svg></span>
+        <span class="cf-trust-title">أداء ثقيل</span>
+        <span class="cf-trust-sub">Heavy-Duty</span>
+      </div>
+      <div class="cf-trust-card">
+        <span class="cf-trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg></span>
+        <span class="cf-trust-title">ضمان رسمي 24 شهر</span>
+        <span class="cf-trust-sub">Official Warranty</span>
+      </div>
+    </div>
+  </div>
+  <div class="cf-stripe"></div>
+</section>
+
+{% schema %}
+{
+  "name": "CF Hero",
+  "settings": []
+}
+{% endschema %}

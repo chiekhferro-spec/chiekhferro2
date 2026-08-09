@@ -1,0 +1,256 @@
+{% comment %}
+  sections/cf-product-detail.liquid
+  CHIEKH FERRO — Product detail page section.
+  Dynamic product data + metafield specs + B2B WhatsApp quote.
+{% endcomment %}
+
+{%- liquid
+  assign product = section.settings.product | default: product
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+    assign discount_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
+  endif
+  assign variant = product.selected_or_first_available_variant
+  assign inv_qty = variant.inventory_quantity
+  assign wa_number = settings.whatsapp_number | default: '213555000000'
+-%}
+
+<div class="mx-auto max-w-[1400px] px-4 py-6" data-product-id="{{ product.id }}">
+
+  {% comment %} Breadcrumb {% endcomment %}
+  <nav class="flex items-center gap-1.5 text-xs text-ink-faint mb-5 flex-wrap">
+    <a href="/" class="hover:text-accent transition-colors">الرئيسية</a>
+    <span>›</span>
+    {% if product.collections.size > 0 %}
+      <a href="{{ product.collections.first.url }}" class="hover:text-accent transition-colors">{{ product.collections.first.title }}</a>
+      <span>›</span>
+    {% endif %}
+    <span class="text-ink-muted line-clamp-1">{{ product.title }}</span>
+  </nav>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    {% comment %} Gallery {% endcomment %}
+    <div class="lg:sticky lg:top-32 lg:self-start">
+      <div class="relative aspect-square overflow-hidden rounded-industrial-lg border border-steel-500/60 bg-steel-700 grid-texture">
+        {% if product.featured_image %}
+          <img src="{{ product.featured_image | image_url: width: 1000 }}"
+               alt="{{ product.title | escape }}"
+               id="MainProductImage"
+               class="h-full w-full object-cover">
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'w-full h-full' }}
+        {% endif %}
+        {% if on_sale %}
+          <span class="absolute top-3 right-3 bg-danger text-white text-sm font-bold px-2.5 py-1 rounded-sm">-{{ discount_pct }}%</span>
+        {% endif %}
+      </div>
+      {% if product.images.size > 1 %}
+        <div class="mt-3 flex gap-3">
+          {% for image in product.images limit: 4 %}
+            <button class="h-20 w-20 overflow-hidden rounded-industrial border-2 {% if forloop.first %}border-accent{% else %}border-steel-500/60{% endif %}"
+                    onclick="document.getElementById('MainProductImage').src='{{ image | image_url: width: 1000 }}'">
+              <img src="{{ image | image_url: width: 160 }}" alt="" class="h-full w-full object-cover">
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    {% comment %} Buy box {% endcomment %}
+    <div class="flex flex-col">
+      <div class="flex items-center justify-between gap-3">
+        {% if section.settings.show_vendor %}
+          <span class="text-xs font-bold text-accent tracking-wider">{{ product.vendor }}</span>
+        {% endif %}
+        <span class="text-xs text-ink-faint font-mono">SKU: {{ product.sku | default: product.id }}</span>
+      </div>
+
+      <h1 class="mt-2 text-2xl md:text-3xl font-black text-ink-main leading-tight">{{ product.title }}</h1>
+
+      {% if section.settings.show_rating and product.metafields.reviews.rating.value != blank %}
+        <div class="mt-3 flex items-center gap-2">
+          <span class="text-sm font-bold text-accent-yellow">{{ product.metafields.reviews.rating.value }} ★</span>
+          <a href="#reviews" class="text-xs text-accent hover:underline">({{ product.metafields.reviews.count.value | default: 0 }} تقييم)</a>
+        </div>
+      {% endif %}
+
+      {% comment %} Price {% endcomment %}
+      <div class="mt-5 flex items-end gap-3 flex-wrap">
+        <span class="text-3xl font-black text-accent">{{ product.price | money }}</span>
+        {% if on_sale %}
+          <span class="text-lg text-ink-faint line-through">{{ product.compare_at_price | money }}</span>
+          <span class="text-sm font-bold text-success">وفّر {{ product.compare_at_price | minus: product.price | money }}</span>
+        {% endif %}
+      </div>
+      <div class="mt-1 text-xs text-ink-faint">السعر يشمل الضريبة · الدفع عند الاستلام متاح</div>
+
+      {% comment %} Stock {% endcomment %}
+      {% if section.settings.show_stock %}
+        <div class="mt-4">
+          {% if product.available %}
+            <div class="flex items-center gap-1.5">
+              <span class="inline-flex h-2 w-2 rounded-full {% if inv_qty <= 7 %}bg-warning{% else %}bg-success{% endif %} animate-pulse"></span>
+              <span class="text-xs font-medium {% if inv_qty <= 7 %}text-warning{% else %}text-success{% endif %}">
+                {% if inv_qty <= 7 %}متبقي {{ inv_qty }} قطع فقط{% else %}متوفر في المخزون{% endif %}
+              </span>
+            </div>
+          {% else %}
+            <span class="text-xs font-medium text-danger">نفد المخزون</span>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% comment %} Spec chips from metafields {% endcomment %}
+      {% if section.settings.show_specs %}
+        <div class="mt-4 flex flex-wrap gap-2">
+          {% for block in section.blocks %}
+            {% if block.type == 'spec' %}
+              {% assign mf = product.metafields[block.settings.metafield_namespace][block.settings.metafield_key] %}
+              {% if mf != blank %}
+                <span class="text-xs text-ink-muted bg-bg-surface border border-steel-500/60 px-2.5 py-1 rounded">
+                  {{ block.settings.label | default: block.settings.metafield_key }}: {{ mf.value | default: mf }}
+                </span>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% comment %} Express COD checkout {% endcomment %}
+      {% if section.settings.show_cod_form and product.available %}
+        <div class="cf-cod-panel mt-6" id="express-cod">
+          <div class="cf-cod-heading">
+            <div>
+              <span class="cf-eyebrow">طلب سريع · توصيل محلي</span>
+              <h2>اطلب الآن بالدفع عند الاستلام</h2>
+            </div>
+            <span class="cf-cod-mark">COD</span>
+          </div>
+          <p class="cf-cod-note">أدخل بياناتك وسنتصل بك لتأكيد الطلب قبل الشحن.</p>
+          <form action="/cart/add" method="post" class="cf-cod-form">
+            <input type="hidden" name="id" value="{{ variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <input type="hidden" name="return_to" value="/checkout">
+            <label>
+              <span>الاسم الكامل</span>
+              <input type="text" name="properties[اسم العميل]" autocomplete="name" placeholder="مثال: محمد أحمد" required>
+            </label>
+            <label>
+              <span>رقم الهاتف</span>
+              <input type="tel" name="properties[رقم الهاتف]" autocomplete="tel" inputmode="tel" placeholder="05 XX XX XX XX" required>
+            </label>
+            <label class="cf-cod-full">
+              <span>عنوان التوصيل</span>
+              <textarea name="properties[عنوان التوصيل]" autocomplete="street-address" rows="2" placeholder="الولاية، المدينة، الحي والعنوان بالتفصيل" required></textarea>
+            </label>
+            <button type="submit" class="cf-cod-submit"><span>تأكيد الطلب — الدفع عند الاستلام</span><span aria-hidden="true">←</span></button>
+          </form>
+          <div class="cf-cod-foot"><span>✓ لا حاجة للدفع الآن</span><span>✓ تأكيد هاتفي</span><span>✓ شحن آمن</span></div>
+        </div>
+      {% endif %}
+
+      {% comment %} Quantity + Add to cart {% endcomment %}
+      <form action="/cart/add" method="post" class="mt-6 flex items-stretch gap-3" data-ajax-add>
+        <input type="hidden" name="id" value="{{ variant.id }}">
+        <div class="flex items-center gap-1 rounded-industrial border border-steel-400 bg-bg-surface px-1">
+          <button type="button" onclick="this.nextElement.stepDown()" class="h-10 w-10 text-ink-muted hover:text-accent">-</button>
+          <input type="number" name="quantity" value="1" min="1" class="w-12 text-center text-lg font-bold text-ink-main bg-transparent">
+          <button type="button" onclick="this.previousElement.stepUp()" class="h-10 w-10 text-ink-muted hover:text-accent">+</button>
+        </div>
+        <button type="submit" name="add" class="flex flex-1 items-center justify-center gap-2 h-12 px-6 rounded-industrial font-bold bg-accent text-bg-primary hover:bg-accent-yellow transition-colors">
+          أضف إلى السلة
+        </button>
+      </form>
+
+      {% comment %} B2B WhatsApp quote {% endcomment %}
+      {% if section.settings.show_whatsapp_quote %}
+        {% assign wa_text = 'مرحباً CHIEKH FERRO، أرغب في طلب عرض سعر لـ: ' | append: product.title | append: ' | SKU: ' | append: product.sku %}
+        <a href="https://wa.me/{{ wa_number }}?text={{ wa_text | url_encode }}"
+           target="_blank" rel="noreferrer"
+           class="mt-3 flex items-center justify-center gap-2 h-12 px-6 rounded-industrial bg-success/15 text-success font-bold hover:bg-success/25 transition-colors border border-success/30">
+          اطلب عرض سعر B2B عبر واتساب
+        </a>
+        <div class="mt-1.5 text-center text-xs text-ink-faint">للطلبات بالجملة والمقاولات — رد فوري خلال ساعات العمل</div>
+      {% endif %}
+
+      {% comment %} Trust badges {% endcomment %}
+      {% if section.settings.show_trust_badges %}
+        <div class="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {% assign badges = 'منتج أصلي/ضمان رسمي|توصيل سريع/48 ساعة|استبدال سهل/خلال 7 أيام|دفع آمن/حماية كاملة' | split: '|' %}
+          {% for b in badges %}
+            {% assign parts = b | split: '/' %}
+            <div class="flex flex-col items-center text-center gap-1 p-3 rounded-industrial bg-bg-surface border border-steel-500/50">
+              <div class="text-accent font-black text-lg">✓</div>
+              <div class="text-xs font-bold text-ink-main">{{ parts[0] }}</div>
+              <div class="text-[10px] text-ink-faint">{{ parts[1] }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% comment %} Description {% endcomment %}
+      {% if product.description != blank %}
+        <div class="mt-6 text-sm text-ink-muted leading-relaxed">
+          {{ product.description }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% comment %} Related products {% endcomment %}
+  {% if section.settings.show_related and product.collections.size > 0 %}
+    <div class="mt-12">
+      <h2 class="text-xl font-black text-ink-main mb-5">منتجات ذات صلة</h2>
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {% assign related = product.collections.first.products %}
+        {% for p in related limit: 4 %}
+          {% if p.id != product.id %}
+            <a href="{{ p.url }}" class="group block bg-bg-surface rounded-industrial-lg border border-steel-500/60 overflow-hidden hover:border-accent/50 transition-all">
+              <div class="aspect-square overflow-hidden bg-steel-700">
+                {% if p.featured_image %}
+                  <img src="{{ p.featured_image | image_url: width: 500 }}" alt="{{ p.title | escape }}" class="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500">
+                {% endif %}
+              </div>
+              <div class="p-3">
+                <h3 class="text-sm font-bold text-ink-main line-clamp-2 group-hover:text-accent">{{ p.title }}</h3>
+                <span class="mt-1 block text-lg font-black text-accent">{{ p.price | money }}</span>
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "CF Product Detail",
+  "tag": "section",
+  "settings": [
+    { "type": "checkbox", "id": "show_vendor", "label": "إظهار الماركة", "default": true },
+    { "type": "checkbox", "id": "show_rating", "label": "إظهار التقييم", "default": true },
+    { "type": "checkbox", "id": "show_stock", "label": "إظهار المخزون", "default": true },
+    { "type": "checkbox", "id": "show_specs", "label": "إظهار المواصفات", "default": true },
+    { "type": "checkbox", "id": "show_quick_add", "label": "إظهار زر الإضافة", "default": true },
+    { "type": "checkbox", "id": "show_cod_form", "label": "إظهار نموذج الدفع عند الاستلام", "default": true },
+    { "type": "checkbox", "id": "show_whatsapp_quote", "label": "إظهار زر واتساب B2B", "default": true },
+    { "type": "checkbox", "id": "show_trust_badges", "label": "إظهار شارات الثقة", "default": true },
+    { "type": "checkbox", "id": "show_related", "label": "إظهار منتجات ذات صلة", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "spec",
+      "name": "مواصفة تقنية",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "label", "label": "الاسم المعروض", "default": "الطاقة" },
+        { "type": "text", "id": "metafield_namespace", "label": "Namespace", "default": "specs" },
+        { "type": "text", "id": "metafield_key", "label": "Key", "default": "power" }
+      ]
+    }
+  ]
+}
+{% endschema %}

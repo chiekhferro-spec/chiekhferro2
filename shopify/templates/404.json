@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "cf-404",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
